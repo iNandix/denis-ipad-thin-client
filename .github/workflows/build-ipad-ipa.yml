@@ -1,0 +1,65 @@
+name: Build Denis iPad IPA
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'apps/ipad-thin-client/**'
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: apps/ipad-thin-client
+        run: npm install
+
+      - name: Build web assets
+        working-directory: apps/ipad-thin-client
+        run: npx vite build
+
+      - name: Capacitor add iOS (generates Xcode project)
+        working-directory: apps/ipad-thin-client
+        run: npx cap add ios
+
+      - name: Capacitor sync
+        working-directory: apps/ipad-thin-client
+        run: npx cap sync ios
+
+      - name: Install CocoaPods
+        working-directory: apps/ipad-thin-client/ios/App
+        run: pod install || true
+
+      - name: Build unsigned IPA
+        working-directory: apps/ipad-thin-client/ios/App
+        run: |
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            PRODUCT_BUNDLE_IDENTIFIER=so.denis.voice.client
+
+      - name: Package IPA
+        working-directory: apps/ipad-thin-client/ios/App
+        run: |
+          cd build/Build/Products/Release-iphoneos
+          mkdir -p Payload
+          cp -r App.app Payload/
+          zip -r ../../../../DenisVoice.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DenisVoice
+          path: apps/ipad-thin-client/DenisVoice.ipa
+          retention-days: 7

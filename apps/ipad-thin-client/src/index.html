@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Denis</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a0f;color:#e0e0e0;
+      display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+    header{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1a1a2e}
+    header h1{font-size:18px;font-weight:600;letter-spacing:0.5px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#333;transition:background 0.3s}
+    .dot.live{background:#00e676;box-shadow:0 0 8px #00e676}
+    .dot.speaking{background:#ff9100;box-shadow:0 0 12px #ff9100;animation:pulse 0.8s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    main{flex:1;display:flex;flex-direction:column;padding:20px;gap:16px;overflow-y:auto}
+    .status-card{background:#12121a;border-radius:12px;padding:16px;border:1px solid #1a1a2e}
+    .status-card h3{font-size:12px;text-transform:uppercase;color:#666;margin-bottom:8px;letter-spacing:1px}
+    .status-card p{font-size:15px;line-height:1.5}
+    .log{font-family:'SF Mono',monospace;font-size:12px;color:#888;max-height:200px;overflow-y:auto;
+      background:#08080d;border-radius:8px;padding:12px;border:1px solid #1a1a2e}
+    .log div{padding:2px 0;border-bottom:1px solid #111}
+    .log .ts{color:#555}
+    .log .msg{color:#aaa}
+    footer{padding:16px 20px;border-top:1px solid #1a1a2e;display:flex;gap:12px}
+    button{flex:1;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;
+      transition:all 0.2s}
+    button:active{transform:scale(0.97)}
+    .btn-connect{background:#007aff;color:white}
+    .btn-connect.connected{background:#00e676;color:#000}
+    .btn-mic{background:#1a1a2e;color:#e0e0e0;border:1px solid #333}
+    .btn-mic.active{background:#ff5722;color:white;border-color:#ff5722}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="dot" id="statusDot"></div>
+    <h1 id="title">Denis</h1>
+  </header>
+  <main>
+    <div class="status-card">
+      <h3>Conexión</h3>
+      <p id="connState">desconectado</p>
+    </div>
+    <div class="status-card">
+      <h3>Última respuesta</h3>
+      <p id="lastText">—</p>
+    </div>
+    <div class="status-card">
+      <h3>Actividad</h3>
+      <div class="log" id="log"></div>
+    </div>
+  </main>
+  <footer>
+    <button class="btn-connect" id="btnConnect" onclick="toggleConnection()">Conectar</button>
+    <button class="btn-mic" id="btnMic" onclick="toggleMic()">🎙️ Mic</button>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
